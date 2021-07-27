@@ -1,0 +1,24 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "medium",
+      "weight": "bolder",
+      "text": "Welcome to your travel reservation bot !",
+      "wrap": true,
+      "maxLines": 0
+    },
+     {
+      "type": "TextBlock",
+      "size": "default",
+      "isSubtle": "true",
+      "text": "My job is to guide you through your travel reservation process.",
+      "wrap": true,
+      "maxLines": 0
+    }
+  ]
+}
