@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Vijal Patel\Downloads\BotBuilder-Samples-main\BotBuilder-Samples-main\samples\python\13.core-bot\venv"
+VIRTUAL_ENV="C:\Users\Vijal Patel\OpenClassRoom\Projet 10\chatbot_code\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

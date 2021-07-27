@@ -1,8 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from botbuilder.ai.luis import LuisApplication, LuisRecognizer
-from botbuilder.core import Recognizer, RecognizerResult, TurnContext
+from botbuilder.ai.luis import (LuisApplication,
+                                LuisRecognizer,
+                                LuisPredictionOptions)
+from botbuilder.core import (
+    Recognizer,
+    RecognizerResult,
+    TurnContext)
 
 from config import DefaultConfig
 
@@ -33,4 +38,5 @@ class FlightBookingRecognizer(Recognizer):
         return self._recognizer is not None
 
     async def recognize(self, turn_context: TurnContext) -> RecognizerResult:
+        print("turn_context :", turn_context)
         return await self._recognizer.recognize(turn_context)

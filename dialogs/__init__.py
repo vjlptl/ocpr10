@@ -3,7 +3,8 @@
 
 from .booking_dialog import BookingDialog
 from .cancel_and_help_dialog import CancelAndHelpDialog
-from .date_resolver_dialog import DateResolverDialog
+from .departure_date_resolver_dialog import DepartureDateResolverDialog
+from .return_date_resolver_dialog import ReturnDateResolverDialog
 from .main_dialog import MainDialog
 
-__all__ = ["BookingDialog", "CancelAndHelpDialog", "DateResolverDialog", "MainDialog"]
+__all__ = ["BookingDialog", "CancelAndHelpDialog", "DepartureDateResolverDialog", "ReturnDateResolverDialog", "MainDialog"]

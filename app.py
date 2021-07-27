@@ -1,3 +1,4 @@
+
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -27,8 +28,11 @@ from bots import DialogAndWelcomeBot
 
 from adapter_with_error_handler import AdapterWithErrorHandler
 from flight_booking_recognizer import FlightBookingRecognizer
+import nest_asyncio
+nest_asyncio.apply()
 
 CONFIG = DefaultConfig()
+
 
 # Create adapter.
 # See https://aka.ms/about-bot-adapter to learn more about how bots work.
@@ -46,8 +50,11 @@ ADAPTER = AdapterWithErrorHandler(SETTINGS, CONVERSATION_STATE)
 # Create dialogs and Bot
 RECOGNIZER = FlightBookingRecognizer(CONFIG)
 BOOKING_DIALOG = BookingDialog()
-DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG)
-BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG)
+DIALOG = MainDialog(RECOGNIZER,
+                    BOOKING_DIALOG)
+BOT = DialogAndWelcomeBot(CONVERSATION_STATE,
+                        USER_STATE,
+                        DIALOG)
 
 
 # Listen for incoming requests on /api/messages.
@@ -59,11 +66,9 @@ async def messages(req: Request) -> Response:
         return Response(status=HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
 
     activity = Activity().deserialize(body)
-
     auth_header = req.headers["Authorization"] if "Authorization" in req.headers else ""
 
     response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
-
     if response:
         return json_response(data=response.body, status=response.status)
     return Response(status=HTTPStatus.OK)
@@ -75,5 +80,6 @@ APP.router.add_post("/api/messages", messages)
 if __name__ == "__main__":
     try:
         web.run_app(APP, host="localhost", port=CONFIG.PORT)
+        #web.run_app(APP)
     except Exception as error:
         raise error

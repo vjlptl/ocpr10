@@ -44,7 +44,7 @@ class DialogAndWelcomeBot(DialogBot):
                     turn_context,
                     self.conversation_state.create_property("DialogState"),
                 )
-
+            
     # Load attachment from file.
     def create_adaptive_card_attachment(self):
         relative_path = os.path.abspath(os.path.dirname(__file__))
