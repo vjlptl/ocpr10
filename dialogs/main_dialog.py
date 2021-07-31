@@ -8,7 +8,7 @@ from botbuilder.dialogs import (
     DialogTurnResult,
 )
 from botbuilder.dialogs.prompts import TextPrompt, PromptOptions
-from botbuilder.core import MessageFactory, TurnContext
+from botbuilder.core import MessageFactory, TurnContext, BotTelemetryClient, NullTelemetryClient
 from botbuilder.schema import InputHints
 
 from booking_details import BookingDetails
@@ -19,20 +19,30 @@ from .booking_dialog import BookingDialog
 
 class MainDialog(ComponentDialog):
     def __init__(
-        self, luis_recognizer: FlightBookingRecognizer, booking_dialog: BookingDialog
+        self,
+        luis_recognizer: FlightBookingRecognizer,
+        booking_dialog: BookingDialog,
+        telemetry_client: BotTelemetryClient = None,
     ):
         super(MainDialog, self).__init__(MainDialog.__name__)
+        self.telemetry_client = telemetry_client or NullTelemetryClient()
+
+        text_prompt = TextPrompt(TextPrompt.__name__)
+        text_prompt.telemetry_client = self.telemetry_client
+
+        booking_dialog.telemetry_client = self.telemetry_client
+
+        wf_dialog = WaterfallDialog(
+            "WFDialog", [self.intro_step, self.act_step, self.final_step]
+        )
+        wf_dialog.telemetry_client = self.telemetry_client
 
         self._luis_recognizer = luis_recognizer
         self._booking_dialog_id = booking_dialog.id
 
-        self.add_dialog(TextPrompt(TextPrompt.__name__))
+        self.add_dialog(text_prompt)
         self.add_dialog(booking_dialog)
-        self.add_dialog(
-            WaterfallDialog(
-                "WFDialog", [self.intro_step, self.act_step, self.final_step]
-            )
-        )
+        self.add_dialog(wf_dialog)
 
         self.initial_dialog_id = "WFDialog"
 
@@ -110,7 +120,7 @@ class MainDialog(ComponentDialog):
             # If the call to the booking service was successful tell the user.
             # time_property = Timex(result.travel_date)
             # travel_date_msg = time_property.to_natural_language(datetime.now())
-            msg_txt = f"I have you booked to {result.destination} from {result.origin} on {result.travel_date}"
+            msg_txt = f"I have you booked from {result.origin} to {result.destination} from {result.departure_date} to {result.return_date} for less than { result.budget}"
             message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
             await step_context.context.send_activity(message)
 

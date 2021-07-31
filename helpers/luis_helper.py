@@ -80,21 +80,95 @@ class LuisHelper:
                         result.unsupported_airports.append(
                             from_entities[0]["text"].capitalize()
                         )
+                #https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-currency?tabs=V3
+                budget_entities = recognizer_result.entities.get("money", [])
+                #print("luis_helper - 85")
+                #print(budget_entities)
+                if budget_entities:
+                    #print(result.budget)
+                    result.budget = str(budget_entities[0]["number"]) + " " + budget_entities[0]["units"]
+                    print(result.budget)
+                else:
+                    result.budget = None
 
                 # This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop
                 # the Time part. TIMEX is a format that represents DateTime expressions that include some ambiguity.
                 # e.g. missing a Year.
-                date_entities = recognizer_result.entities.get("datetime", [])
-                if date_entities:
-                    timex = date_entities[0]["timex"]
+                departure_date_entities = recognizer_result.entities.get("datetime", [])
+                #print("luis_helper")
+                #print(departure_date_entities)
+                #print(len(departure_date_entities))
+                #print(departure_date_entities[0]["type"])
+
+                if departure_date_entities and len(departure_date_entities) == 1 and departure_date_entities[0]["type"] == 'date':
+                    #print("A")
+                    timex = departure_date_entities[0]["timex"]
 
                     if timex:
                         datetime = timex[0].split("T")[0]
 
-                        result.travel_date = datetime
+                        result.departure_date = datetime
+                        print(result.departure_date)
+                else:
+                    if departure_date_entities and len(departure_date_entities) == 1 and departure_date_entities[0][
+                        "type"] == 'daterange':
+                        #print("B")
+                        timex = departure_date_entities[0]["timex"]
+
+                        if timex:
+                            datetime = timex[0].split("T")[0][1:11]
+
+                            result.departure_date = datetime
+                            print(datetime)
+                    else:
+                        if departure_date_entities and len(departure_date_entities) == 2:
+                            #print("C")
+                            timex = departure_date_entities[0]["timex"]
+
+                            if timex:
+                                datetime = timex[0].split("T")[0]
+
+                                result.departure_date = datetime
+
+                            else:
+                                #print("D")
+                                result.departure_date = None
+
+                # This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop
+                # the Time part. TIMEX is a format that represents DateTime expressions that include some ambiguity.
+                # e.g. missing a Year.
+                return_date_entities = recognizer_result.entities.get("datetime", [])
+                #print("luis_helper")
+                #print(return_date_entities)
+
+                if return_date_entities and len(return_date_entities) == 1 and return_date_entities[0]["type"] == 'date':
+                    #print("E")
+                    result.return_date = None
 
                 else:
-                    result.travel_date = None
+                    if return_date_entities and len(return_date_entities) == 1 and return_date_entities[0][
+                        "type"] == 'daterange':
+                        #print("F")
+                        timex = return_date_entities[0]["timex"]
+                        #print(timex)
+                        if timex:
+                            datetime = timex[0].split("T")[0][12:22]
+
+                            result.return_date = datetime
+                            #print(datetime)
+                    else:
+                        if return_date_entities and len(return_date_entities) == 2:
+                            #print("G")
+                            timex = return_date_entities[1]["timex"]
+
+                            if timex:
+                                datetime = timex[0].split("T")[0]
+
+                                result.return_date = datetime
+
+                            else:
+                                #print("H")
+                                result.return_date = None
 
         except Exception as exception:
             print(exception)
