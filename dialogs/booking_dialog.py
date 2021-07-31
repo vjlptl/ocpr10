@@ -11,6 +11,7 @@ from .cancel_and_help_dialog import CancelAndHelpDialog
 #from .date_resolver_dialog import DateResolverDialog
 from .departure_date_resolver_dialog import DepartureDateResolverDialog
 from .return_date_resolver_dialog import ReturnDateResolverDialog
+from applicationinsights import TelemetryClient
 
 class BookingDialog(CancelAndHelpDialog):
     def __init__(
@@ -187,11 +188,43 @@ class BookingDialog(CancelAndHelpDialog):
         :param step_context:
         :return DialogTurnResult:
         """
-        if step_context.result:
+        booking_details = step_context.options
+        properties = {}
+        properties["destination"] = booking_details.destination
+        properties["origin"] = booking_details.origin
+        properties["departure_date"] = booking_details.departure_date
+        properties["return_date"] = booking_details.return_date
+        properties["budget"] = booking_details.budget
+
+        #TEST
+        if step_context.result is None:
+            #print("FALSE")
+            #from applicationinsights import TelemetryClient
+            tc = TelemetryClient("ddd0b4c5-5455-4889-9310-098ae3050143")
+            #tc.track_trace('FALSE ', {'1': '2'})
+            tc.track_trace("Bad answer received", properties, "WARNING")
+            tc.flush()
+        else:
+            #print("TRUE")
+            #from applicationinsights import TelemetryClient
+            tc = TelemetryClient("ddd0b4c5-5455-4889-9310-098ae3050143")
+            #tc.track_trace('TRUE ', {'3': '4'})
+            tc.track_trace("Good answer received", properties, "INFO")
+            tc.flush()
+
+
+        if step_context.result is None:
+            self.telemetry_client.track_trace("Bad answer received", properties, "WARNING")
+            self.telemetry_client.flush()
+        else:
+            self.telemetry_client.track_trace("Good answer received", properties, "INFO")
+            self.telemetry_client.flush()
+
             booking_details = step_context.options
             booking_details.budget = step_context.result
 
             return await step_context.end_dialog(booking_details)
+
         return await step_context.end_dialog()
 
     def is_ambiguous(self, timex: str) -> bool:
