@@ -32,6 +32,10 @@ from bots import DialogAndWelcomeBot
 from adapter_with_error_handler import AdapterWithErrorHandler
 from flight_booking_recognizer import FlightBookingRecognizer
 
+import unittest
+import requests
+import json
+
 # Authentication
 CONFIG = DefaultConfig()
 
@@ -62,6 +66,29 @@ BOOKING_DIALOG = BookingDialog()
 DIALOG = MainDialog(RECOGNIZER, BOOKING_DIALOG, telemetry_client=TELEMETRY_CLIENT)
 BOT = DialogAndWelcomeBot(CONVERSATION_STATE, USER_STATE, DIALOG, TELEMETRY_CLIENT)
 
+#Running tests
+
+examples = {'BookFlight' : "Book a flight for paris",
+            'GetWeather' : "What's the weather like?",
+            'Cancel' : "Cancel the request please"}
+
+def return_intent(query_):
+
+    query_up = 'https://ocrp10name.cognitiveservices.azure.com/luis/prediction/v3.0/apps/fa4cfa08-373d-4c8d-84fd-3423d3e8814c/slots/production/predict?subscription-key=6faee2d4ebfc40f7a51c549d67e0f60c&verbose=true&show-all-intents=true&log=true&query='+query_
+    r = requests.get(query_up)
+    return json.loads(r.text)['prediction']['topIntent']
+
+class MyTestCase(unittest.TestCase):
+    def test_booking(self):
+        self.assertEqual(return_intent(examples['BookFlight']), 'BookFlight')
+    def test_cancelling(self):
+        self.assertEqual(return_intent(examples['Cancel']), 'Cancel')
+    def test_weather(self):
+        self.assertEqual(return_intent(examples['GetWeather']), 'GetWeather')
+
+
+
+
 
 # Listen for incoming requests on /api/messages.
 async def messages(req: Request) -> Response:
@@ -86,6 +113,7 @@ APP = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middl
 APP.router.add_post("/api/messages", messages)
 
 if __name__ == "__main__":
+    unittest.main()
     try:
         web.run_app(APP, host="localhost", port=CONFIG.PORT)
     except Exception as error:
