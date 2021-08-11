@@ -1,0 +1,82 @@
+[
+    {
+        "text": "Good day, please book me a trip from Vancouver, Jamaica to Recife. I would like to leave for 17 days on August 24.",
+        "intent": "BookFlight",
+        "entities": [
+            {
+                "entity": "To",
+                "startPos": 59,
+                "endPos": 65,
+                "children": [
+                    {
+                        "entity": "Airport",
+                        "startPos": 59,
+                        "endPos": 65
+                    }
+                ]
+            },
+            {
+                "entity": "From",
+                "startPos": 37,
+                "endPos": 55,
+                "children": [
+                    {
+                        "entity": "Airport",
+                        "startPos": 37,
+                        "endPos": 55
+                    }
+                ]
+            },
+            {
+                "entity": "Departure_date",
+                "startPos": 104,
+                "endPos": 113
+            },
+            {
+                "entity": "Return_date",
+                "startPos": 93,
+                "endPos": 100
+            }
+        ]
+    },
+    {
+        "text": "Hey man, imma leave from Godric's Hollow on August 27, 2016 and go to Goiania. Can't pay more than $4300. Watcha got?",
+        "intent": "BookFlight",
+        "entities": [
+            {
+                "entity": "To",
+                "startPos": 70,
+                "endPos": 77,
+                "children": [
+                    {
+                        "entity": "Airport",
+                        "startPos": 70,
+                        "endPos": 77
+                    }
+                ]
+            },
+            {
+                "entity": "From",
+                "startPos": 25,
+                "endPos": 40,
+                "children": [
+                    {
+                        "entity": "Airport",
+                        "startPos": 25,
+                        "endPos": 40
+                    }
+                ]
+            },
+            {
+                "entity": "Departure_date",
+                "startPos": 44,
+                "endPos": 59
+            },
+            {
+                "entity": "budget",
+                "startPos": 99,
+                "endPos": 106
+            }
+        ]
+    }
+]
